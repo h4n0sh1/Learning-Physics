@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conductor vs Insulator - Atomic Structure</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .material-box {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            width: 450px;
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+        .material-box h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        .copper h2 { color: #ff9f43; }
+        .rubber h2 { color: #a55eea; }
+        
+        .diagram {
+            position: relative;
+            height: 300px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        
+        /* Copper atoms */
+        .copper-atom {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border: 3px dashed #ff9f43;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .copper-core {
+            width: 25px;
+            height: 25px;
+            background: radial-gradient(circle, #ff6b6b, #c0392b);
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+        .bound-electron {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #3498db;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #3498db;
+        }
+        
+        /* Free electrons in copper */
+        .free-electron {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #2ecc71;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #2ecc71, 0 0 20px #2ecc71;
+            animation: drift 3s ease-in-out infinite;
+        }
+        
+        @keyframes drift {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+        }
+        
+        /* Rubber atoms */
+        .carbon-atom {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #9b59b6, #6c3483);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .covalent-bond {
+            position: absolute;
+            height: 4px;
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            border-radius: 2px;
+        }
+        .locked-electron {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #3498db;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #3498db;
+        }
+        
+        .no-flow {
+            position: absolute;
+            font-size: 60px;
+            color: #e74c3c;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.3;
+            font-weight: bold;
+        }
+        
+        .explanation {
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #ccc;
+        }
+        .explanation strong {
+            color: #fff;
+        }
+        
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85em;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .legend-dot.free { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; }
+        .legend-dot.bound { background: #3498db; }
+        .legend-dot.core { background: #c0392b; }
+        .legend-dot.carbon { background: #9b59b6; }
+        
+        .analogy {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+        }
+        .analogy h3 {
+            color: #00d4ff;
+            margin-bottom: 15px;
+        }
+        .analogy-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+        }
+        .analogy-item {
+            text-align: center;
+        }
+        .analogy-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .voltage-arrow {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #f1c40f;
+            font-weight: bold;
+        }
+        .arrow-line {
+            width: 100px;
+            height: 3px;
+            background: #f1c40f;
+            position: relative;
+        }
+        .arrow-line::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            top: -5px;
+            border: 6px solid transparent;
+            border-left: 10px solid #f1c40f;
+        }
+    </style>
+</head>
+<body>
+    <h1>⚡ Conductor vs Insulator</h1>
+    <p class="subtitle">Why copper conducts electricity and rubber doesn't</p>
+    
+    <div class="container">
+        <!-- Copper Section -->
+        <div class="material-box copper">
+            <h2>🔶 Copper (Conductor)</h2>
+            <div class="diagram" id="copper-diagram">
+                <!-- Copper atoms will be positioned with inline styles -->
+                <div class="copper-atom" style="top: 30px; left: 30px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 30px; left: 140px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 30px; left: 250px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 30px; left: 360px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                
+                <div class="copper-atom" style="top: 120px; left: 85px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 120px; left: 195px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 120px; left: 305px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                
+                <div class="copper-atom" style="top: 210px; left: 30px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 210px; left: 140px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 210px; left: 250px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                <div class="copper-atom" style="top: 210px; left: 360px;">
+                    <div class="copper-core">Cu⁺</div>
+                    <div class="bound-electron" style="top: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="bottom: 5px; left: 26px;"></div>
+                    <div class="bound-electron" style="left: 5px; top: 26px;"></div>
+                    <div class="bound-electron" style="right: 5px; top: 26px;"></div>
+                </div>
+                
+                <!-- Free electrons drifting -->
+                <div class="free-electron" style="top: 70px; left: 100px; animation-delay: 0s;"></div>
+                <div class="free-electron" style="top: 90px; left: 200px; animation-delay: 0.5s;"></div>
+                <div class="free-electron" style="top: 75px; left: 320px; animation-delay: 1s;"></div>
+                <div class="free-electron" style="top: 170px; left: 50px; animation-delay: 0.3s;"></div>
+                <div class="free-electron" style="top: 180px; left: 150px; animation-delay: 0.8s;"></div>
+                <div class="free-electron" style="top: 165px; left: 260px; animation-delay: 1.2s;"></div>
+                <div class="free-electron" style="top: 175px; left: 370px; animation-delay: 0.6s;"></div>
+                <div class="free-electron" style="top: 260px; left: 110px; animation-delay: 0.4s;"></div>
+                <div class="free-electron" style="top: 255px; left: 220px; animation-delay: 0.9s;"></div>
+                <div class="free-electron" style="top: 265px; left: 340px; animation-delay: 1.4s;"></div>
+                
+                <div class="voltage-arrow">
+                    <span>−</span>
+                    <div class="arrow-line"></div>
+                    <span>+</span>
+                    <span style="margin-left: 10px; font-size: 0.8em;">Electron drift</span>
+                </div>
+            </div>
+            <div class="explanation">
+                <strong>The "Sea of Free Electrons":</strong> In copper, each atom's outermost electron (the 29th) is barely held on. These electrons float freely through the metal lattice, shared by all atoms. When voltage is applied, they all drift together — that's electric current!
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot core"></div> Cu⁺ ion core</div>
+                <div class="legend-item"><div class="legend-dot bound"></div> Bound electrons</div>
+                <div class="legend-item"><div class="legend-dot free"></div> Free electrons (électrons libres)</div>
+            </div>
+        </div>
+        
+        <!-- Rubber Section -->
+        <div class="material-box rubber">
+            <h2>🟣 Rubber (Insulator)</h2>
+            <div class="diagram" id="rubber-diagram">
+                <!-- Carbon atoms connected by covalent bonds -->
+                <div class="carbon-atom" style="top: 50px; left: 80px;">C</div>
+                <div class="carbon-atom" style="top: 50px; left: 180px;">C</div>
+                <div class="carbon-atom" style="top: 50px; left: 280px;">C</div>
+                <div class="carbon-atom" style="top: 50px; left: 380px;">C</div>
+                
+                <div class="carbon-atom" style="top: 130px; left: 30px;">C</div>
+                <div class="carbon-atom" style="top: 130px; left: 130px;">C</div>
+                <div class="carbon-atom" style="top: 130px; left: 230px;">C</div>
+                <div class="carbon-atom" style="top: 130px; left: 330px;">C</div>
+                
+                <div class="carbon-atom" style="top: 210px; left: 80px;">C</div>
+                <div class="carbon-atom" style="top: 210px; left: 180px;">C</div>
+                <div class="carbon-atom" style="top: 210px; left: 280px;">C</div>
+                <div class="carbon-atom" style="top: 210px; left: 380px;">C</div>
+                
+                <!-- Covalent bonds -->
+                <div class="covalent-bond" style="top: 73px; left: 125px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 73px; left: 225px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 73px; left: 325px; width: 60px;"></div>
+                
+                <div class="covalent-bond" style="top: 153px; left: 75px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 153px; left: 175px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 153px; left: 275px; width: 60px;"></div>
+                
+                <div class="covalent-bond" style="top: 233px; left: 125px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 233px; left: 225px; width: 60px;"></div>
+                <div class="covalent-bond" style="top: 233px; left: 325px; width: 60px;"></div>
+                
+                <!-- Diagonal bonds -->
+                <div class="covalent-bond" style="top: 93px; left: 55px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 93px; left: 155px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 93px; left: 255px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 93px; left: 355px; width: 50px; transform: rotate(45deg);"></div>
+                
+                <div class="covalent-bond" style="top: 173px; left: 55px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 173px; left: 155px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 173px; left: 255px; width: 50px; transform: rotate(45deg);"></div>
+                <div class="covalent-bond" style="top: 173px; left: 355px; width: 50px; transform: rotate(45deg);"></div>
+                
+                <!-- Locked electrons on bonds -->
+                <div class="locked-electron" style="top: 70px; left: 145px;"></div>
+                <div class="locked-electron" style="top: 70px; left: 155px;"></div>
+                <div class="locked-electron" style="top: 70px; left: 245px;"></div>
+                <div class="locked-electron" style="top: 70px; left: 255px;"></div>
+                <div class="locked-electron" style="top: 70px; left: 345px;"></div>
+                <div class="locked-electron" style="top: 70px; left: 355px;"></div>
+                
+                <div class="locked-electron" style="top: 150px; left: 95px;"></div>
+                <div class="locked-electron" style="top: 150px; left: 105px;"></div>
+                <div class="locked-electron" style="top: 150px; left: 195px;"></div>
+                <div class="locked-electron" style="top: 150px; left: 205px;"></div>
+                <div class="locked-electron" style="top: 150px; left: 295px;"></div>
+                <div class="locked-electron" style="top: 150px; left: 305px;"></div>
+                
+                <div class="no-flow">✕</div>
+            </div>
+            <div class="explanation">
+                <strong>All Electrons Locked in Place:</strong> In rubber, every electron is either tightly bound to its carbon atom or shared in covalent bonds between atoms. There are NO free electrons to carry current. Voltage pushes, but nothing can move!
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot carbon"></div> Carbon atoms</div>
+                <div class="legend-item"><div class="legend-dot bound"></div> Locked electrons (in bonds)</div>
+                <div class="legend-item" style="color: #e74c3c;">━ Covalent bonds</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="analogy">
+        <h3>🎭 The Concert Analogy</h3>
+        <div class="analogy-container">
+            <div class="analogy-item">
+                <div class="analogy-icon">🎤</div>
+                <strong style="color: #ff9f43;">Copper</strong>
+                <p>Standing room only, no assigned seats<br>→ People can flow freely</p>
+            </div>
+            <div class="analogy-item">
+                <div class="analogy-icon">🎭</div>
+                <strong style="color: #a55eea;">Rubber</strong>
+                <p>Theater with assigned seats & armrests<br>→ Everyone stuck in place</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
