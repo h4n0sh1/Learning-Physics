@@ -100,10 +100,10 @@ Check out the animated HTML visualizations I created to understand these concept
 
 | Visualization | Description |
 |--------------|-------------|
-| [Conductor vs Insulator](./visualizations/conductor-vs-insulator.html) | See why copper's free electrons can drift while rubber's are locked in place |
-| [Complete Battery Circuit](./visualizations/battery-circuit-complete.html) | Watch electrons flow, chemical reactions happen, and ions transport charge |
+| [⚡ Conductor vs Insulator](https://h4n0sh1.github.io/Learning-Physics/visualizations/conductor-vs-insulator.html) | See why copper's free electrons can drift while rubber's are locked in place |
+| [🔋 Complete Battery Circuit](https://h4n0sh1.github.io/Learning-Physics/visualizations/battery-circuit-complete.html) | Watch electrons flow, chemical reactions happen, and ions transport charge |
 
-> 💡 Open these in your browser to see the animations!
+> 💡 **Click the links above to see the live animations!**
 
 ---
 
