@@ -3,508 +3,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Battery Circuit - From Chemistry to Electron Flow</title>
+    <title>Complete Battery Circuit - From Chemistry to Current</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
             min-height: 100vh;
-            color: #fff;
-            padding: 20px;
+            color: #e0e0e0;
+            padding: 30px 20px;
         }
+        
         h1 {
             text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.2em;
-            background: linear-gradient(90deg, #f1c40f, #e74c3c, #9b59b6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #fff;
         }
+        
         .subtitle {
             text-align: center;
             color: #888;
             margin-bottom: 30px;
-            font-size: 1.1em;
+            font-size: 1rem;
         }
         
-        .circuit-container {
-            position: relative;
-            max-width: 1000px;
-            margin: 0 auto;
-            height: 600px;
-            background: rgba(255,255,255,0.02);
+        .main-diagram {
+            max-width: 1100px;
+            margin: 0 auto 40px;
+            background: rgba(255,255,255,0.03);
             border-radius: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
         
-        /* Battery */
-        .battery {
-            position: absolute;
-            left: 50px;
-            top: 150px;
-            width: 180px;
-            height: 300px;
-            background: linear-gradient(180deg, #2c3e50, #34495e);
-            border-radius: 10px;
-            border: 3px solid #7f8c8d;
-        }
-        .battery-label {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-weight: bold;
-            font-size: 1.2em;
-            color: #f1c40f;
-        }
-        
-        /* Electrodes */
-        .anode {
-            position: absolute;
-            left: 10px;
-            top: 20px;
-            width: 60px;
-            height: 260px;
-            background: linear-gradient(180deg, #95a5a6, #7f8c8d);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-        .anode-label {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-weight: bold;
-            color: #2c3e50;
-        }
-        .cathode {
-            position: absolute;
-            right: 10px;
-            top: 20px;
-            width: 60px;
-            height: 260px;
-            background: linear-gradient(180deg, #2c2c2c, #1a1a1a);
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .cathode-label {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            font-weight: bold;
-            color: #bdc3c7;
-        }
-        
-        /* Electrolyte */
-        .electrolyte {
-            position: absolute;
-            left: 75px;
-            top: 20px;
-            width: 30px;
-            height: 260px;
-            background: linear-gradient(180deg, rgba(52, 152, 219, 0.3), rgba(52, 152, 219, 0.5));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-around;
-            padding: 10px 0;
-        }
-        
-        /* Ions */
-        .ion {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            font-weight: bold;
-            animation: ionDrift 2s ease-in-out infinite alternate;
-        }
-        .k-ion {
-            background: #e74c3c;
-            color: white;
-        }
-        .oh-ion {
-            background: #3498db;
-            color: white;
-            animation-direction: alternate-reverse;
-        }
-        
-        @keyframes ionDrift {
-            0% { transform: translateY(-5px); }
-            100% { transform: translateY(5px); }
-        }
-        
-        /* Terminals */
-        .terminal {
-            position: absolute;
-            width: 40px;
-            height: 30px;
-            border-radius: 5px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.5em;
-        }
-        .negative-terminal {
-            left: 20px;
-            top: -15px;
-            background: #3498db;
-            color: white;
-        }
-        .positive-terminal {
-            right: 20px;
-            top: -15px;
-            background: #e74c3c;
-            color: white;
-        }
-        
-        /* Wires */
-        .wire {
-            position: absolute;
-            background: linear-gradient(90deg, #f39c12, #e67e22);
-            border-radius: 4px;
-        }
-        .wire-top-left {
-            left: 90px;
-            top: 120px;
-            width: 8px;
-            height: 50px;
-        }
-        .wire-top {
-            left: 90px;
-            top: 120px;
-            width: 720px;
-            height: 8px;
-        }
-        .wire-top-right {
-            right: 190px;
-            top: 120px;
-            width: 8px;
-            height: 100px;
-        }
-        .wire-bottom-left {
-            left: 180px;
-            top: 470px;
-            width: 8px;
-            height: 50px;
-        }
-        .wire-bottom {
-            left: 180px;
-            top: 510px;
-            width: 550px;
-            height: 8px;
-        }
-        .wire-bottom-right {
-            right: 190px;
-            top: 380px;
-            width: 8px;
-            height: 140px;
-        }
-        
-        /* Light bulb */
-        .bulb-container {
-            position: absolute;
-            right: 140px;
-            top: 200px;
-            width: 120px;
-            height: 180px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .bulb {
-            width: 80px;
-            height: 100px;
-            background: radial-gradient(circle at 50% 40%, #fff9c4, #ffeb3b, #ffc107);
-            border-radius: 50% 50% 40% 40%;
-            box-shadow: 0 0 30px #ffeb3b, 0 0 60px #ffc107, 0 0 90px #ff9800;
-            animation: glow 1s ease-in-out infinite alternate;
-        }
-        .bulb-base {
-            width: 40px;
-            height: 30px;
-            background: linear-gradient(180deg, #7f8c8d, #95a5a6);
-            border-radius: 0 0 5px 5px;
-        }
-        .bulb-label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #f1c40f;
-        }
-        
-        @keyframes glow {
-            0% { box-shadow: 0 0 20px #ffeb3b, 0 0 40px #ffc107; }
-            100% { box-shadow: 0 0 40px #ffeb3b, 0 0 80px #ffc107, 0 0 120px #ff9800; }
-        }
-        
-        /* Electrons */
-        .electron {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #2ecc71;
-            border-radius: 50%;
-            box-shadow: 0 0 10px #2ecc71;
-            font-size: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .electron-flow-top {
-            animation: flowTop 4s linear infinite;
-        }
-        .electron-flow-right {
-            animation: flowRight 2s linear infinite;
-        }
-        .electron-flow-bottom {
-            animation: flowBottom 4s linear infinite;
-        }
-        .electron-flow-left {
-            animation: flowLeft 2s linear infinite;
-        }
-        
-        @keyframes flowTop {
-            0% { left: 100px; top: 115px; }
-            100% { left: 800px; top: 115px; }
-        }
-        @keyframes flowRight {
-            0% { right: 192px; top: 130px; }
-            100% { right: 192px; top: 370px; }
-        }
-        @keyframes flowBottom {
-            0% { left: 720px; top: 505px; }
-            100% { left: 190px; top: 505px; }
-        }
-        @keyframes flowLeft {
-            0% { left: 182px; top: 460px; }
-            100% { left: 182px; top: 155px; }
-        }
-        
-        /* Chemical equations */
-        .equation-box {
-            position: absolute;
-            background: rgba(0,0,0,0.7);
-            border-radius: 10px;
-            padding: 15px;
-            border: 2px solid;
-        }
-        .anode-equation {
-            left: 260px;
-            top: 180px;
-            border-color: #95a5a6;
-            max-width: 280px;
-        }
-        .cathode-equation {
-            right: 280px;
-            top: 320px;
-            border-color: #2c2c2c;
-            max-width: 320px;
-        }
-        .equation-title {
-            font-weight: bold;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-        }
-        .equation {
-            font-family: 'Courier New', monospace;
-            color: #2ecc71;
-            font-size: 0.85em;
-        }
-        .equation-note {
-            font-size: 0.75em;
-            color: #888;
-            margin-top: 8px;
-        }
-        
-        /* Legend */
-        .legend {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            background: rgba(0,0,0,0.5);
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.85em;
-        }
-        .legend-dot {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-        }
-        .legend-dot.electron { background: #2ecc71; box-shadow: 0 0 5px #2ecc71; }
-        .legend-dot.k { background: #e74c3c; }
-        .legend-dot.oh { background: #3498db; }
-        
-        /* Info panels */
-        .info-panel {
-            max-width: 1000px;
-            margin: 30px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .info-card {
-            background: rgba(255,255,255,0.05);
+        .diagram-container {
+            background: #0a0a12;
             border-radius: 15px;
-            padding: 20px;
-            border: 2px solid rgba(255,255,255,0.1);
+            padding: 15px;
+            overflow: hidden;
         }
-        .info-card h3 {
+        
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Electron flow animation */
+        @keyframes electronFlow {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
+        }
+        
+        .electron-particle {
+            offset-rotate: 0deg;
+            animation: electronFlow 8s linear infinite;
+        }
+        
+        .electron-particle:nth-child(2) { animation-delay: -1s; }
+        .electron-particle:nth-child(3) { animation-delay: -2s; }
+        .electron-particle:nth-child(4) { animation-delay: -3s; }
+        .electron-particle:nth-child(5) { animation-delay: -4s; }
+        .electron-particle:nth-child(6) { animation-delay: -5s; }
+        .electron-particle:nth-child(7) { animation-delay: -6s; }
+        .electron-particle:nth-child(8) { animation-delay: -7s; }
+        
+        /* Ion drift animation */
+        @keyframes ionDrift {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+        
+        .drifting-ion {
+            animation: ionDrift 3s ease-in-out infinite;
+        }
+        
+        /* Sections below */
+        .sections-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+        
+        @media (max-width: 900px) {
+            .sections-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .section-box h2 {
+            font-size: 1.2rem;
             margin-bottom: 15px;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        .info-card p {
-            color: #ccc;
-            line-height: 1.6;
-            font-size: 0.95em;
+        
+        .section-box.anode h2 { color: #3498db; }
+        .section-box.cathode h2 { color: #e74c3c; }
+        .section-box.electrolyte h2 { color: #f39c12; }
+        .section-box.wire h2 { color: #2ecc71; }
+        
+        .equation-box {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            text-align: center;
+            border-left: 4px solid;
         }
-        .info-card .highlight {
-            color: #2ecc71;
+        
+        .section-box.anode .equation-box { border-left-color: #3498db; }
+        .section-box.cathode .equation-box { border-left-color: #e74c3c; }
+        
+        .explanation {
+            font-size: 0.95rem;
+            line-height: 1.7;
+            color: #ccc;
+        }
+        
+        .explanation p {
+            margin-bottom: 10px;
+        }
+        
+        .highlight {
+            font-weight: 600;
+        }
+        
+        .highlight-blue { color: #3498db; }
+        .highlight-red { color: #e74c3c; }
+        .highlight-green { color: #2ecc71; }
+        .highlight-yellow { color: #f39c12; }
+        
+        .full-width-section {
+            grid-column: 1 / -1;
+        }
+        
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+            position: relative;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 5%;
+            right: 5%;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #f39c12, #e74c3c);
+            z-index: 0;
+        }
+        
+        .timeline-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .timeline-step .number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 0 auto 10px;
+        }
+        
+        .timeline-step:nth-child(1) .number { background: #3498db; }
+        .timeline-step:nth-child(2) .number { background: #2ecc71; }
+        .timeline-step:nth-child(3) .number { background: #f39c12; }
+        .timeline-step:nth-child(4) .number { background: #e74c3c; }
+        .timeline-step:nth-child(5) .number { background: #9b59b6; }
+        
+        .timeline-step .label {
+            font-size: 0.85rem;
+            color: #aaa;
+            padding: 0 5px;
+        }
+        
+        .energy-diagram {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .legend-symbol {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
             font-weight: bold;
         }
         
-        .step-number {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-radius: 50%;
-            font-weight: bold;
-            margin-right: 10px;
+        .key-insight {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(46, 204, 113, 0.05));
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        
+        .key-insight h3 {
+            color: #2ecc71;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        
+        .key-insight p {
+            color: #ccc;
+            line-height: 1.7;
         }
     </style>
 </head>
 <body>
-    <h1>🔋 Complete Battery Circuit</h1>
-    <p class="subtitle">From chemical reactions to electron flow — the full picture</p>
+    <h1>Complete Battery Circuit: From Chemistry to Current</h1>
+    <p class="subtitle">A zinc-carbon alkaline cell powering a light bulb</p>
     
-    <div class="circuit-container">
-        <!-- Battery -->
-        <div class="battery">
-            <div class="battery-label">⚡ Alkaline Battery</div>
-            <div class="terminal negative-terminal">−</div>
-            <div class="terminal positive-terminal">+</div>
-            <div class="anode">
-                <span class="anode-label">Zn (Zinc)<br>ANODE</span>
+    <div class="main-diagram">
+        <div class="diagram-container">
+            <svg viewBox="0 0 1000 600" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <!-- Arrow markers -->
+                    <marker id="arrowGreen" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#2ecc71"/>
+                    </marker>
+                    <marker id="arrowBlue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#3498db"/>
+                    </marker>
+                    <marker id="arrowOrange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#f39c12"/>
+                    </marker>
+                    <marker id="arrowRed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#e74c3c"/>
+                    </marker>
+                    
+                    <!-- Gradient for wire -->
+                    <linearGradient id="wireGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#8B4513"/>
+                        <stop offset="50%" style="stop-color:#CD853F"/>
+                        <stop offset="100%" style="stop-color:#8B4513"/>
+                    </linearGradient>
+                    
+                    <!-- Electron path for animation -->
+                    <path id="electronPath" d="M 270 350 L 270 80 L 730 80 L 730 350" fill="none"/>
+                    
+                    <!-- Glow filter -->
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- ==================== BATTERY CASING ==================== -->
+                <rect x="200" y="150" width="600" height="400" rx="20" fill="#1a1a2e" stroke="#444" stroke-width="3"/>
+                <text x="500" y="140" text-anchor="middle" fill="#666" font-size="14">BATTERY (Alkaline Cell)</text>
+                
+                <!-- ==================== ANODE (Negative electrode - Zinc) ==================== -->
+                <rect x="220" y="180" width="80" height="340" rx="5" fill="#3498db" opacity="0.3" stroke="#3498db" stroke-width="2"/>
+                <rect x="230" y="190" width="60" height="320" rx="3" fill="#5dade2"/>
+                <text x="260" y="220" text-anchor="middle" fill="#1a1a2e" font-weight="bold" font-size="14">ZINC</text>
+                <text x="260" y="240" text-anchor="middle" fill="#1a1a2e" font-size="12">(Zn)</text>
+                <text x="260" y="270" text-anchor="middle" fill="#1a1a2e" font-size="11">ANODE</text>
+                <text x="260" y="290" text-anchor="middle" fill="#1a1a2e" font-size="10">(−)</text>
+                
+                <!-- Zinc atoms becoming ions (showing oxidation) -->
+                <g transform="translate(240, 320)">
+                    <!-- Zinc atom losing electrons -->
+                    <circle cx="20" cy="0" r="15" fill="#2980b9" stroke="#1a5276" stroke-width="2"/>
+                    <text x="20" y="5" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Zn</text>
+                    
+                    <!-- Arrow showing electron release -->
+                    <line x1="40" y1="0" x2="70" y2="-20" stroke="#2ecc71" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                    
+                    <!-- Released electrons -->
+                    <circle cx="80" cy="-25" r="6" fill="#2ecc71" filter="url(#glow)"/>
+                    <text x="80" y="-22" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">e⁻</text>
+                    <circle cx="95" cy="-30" r="6" fill="#2ecc71" filter="url(#glow)"/>
+                    <text x="95" y="-27" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">e⁻</text>
+                    
+                    <!-- Zinc ion going into solution -->
+                    <line x1="40" y1="5" x2="80" y2="30" stroke="#f39c12" stroke-width="2" marker-end="url(#arrowOrange)"/>
+                    <circle cx="95" cy="40" r="15" fill="#f39c12" opacity="0.8"/>
+                    <text x="95" y="44" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">Zn²⁺</text>
+                </g>
+                
+                <!-- Excess electrons shown at anode surface -->
+                <g class="electron-accumulation">
+                    <circle cx="295" cy="250" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="280" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="310" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="340" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="370" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="400" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="430" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                    <circle cx="295" cy="460" r="5" fill="#2ecc71" filter="url(#glow)"/>
+                </g>
+                
+                <!-- Label: electron pressure -->
+                <text x="260" y="500" text-anchor="middle" fill="#2ecc71" font-size="10">High e⁻ pressure</text>
+                <text x="260" y="515" text-anchor="middle" fill="#2ecc71" font-size="10">(want to escape!)</text>
+                
+                <!-- ==================== CATHODE (Positive electrode - MnO2) ==================== -->
+                <rect x="700" y="180" width="80" height="340" rx="5" fill="#e74c3c" opacity="0.3" stroke="#e74c3c" stroke-width="2"/>
+                <rect x="710" y="190" width="60" height="320" rx="3" fill="#c0392b"/>
+                <text x="740" y="220" text-anchor="middle" fill="#fff" font-weight="bold" font-size="12">MnO₂</text>
+                <text x="740" y="245" text-anchor="middle" fill="#fff" font-size="10">Manganese</text>
+                <text x="740" y="260" text-anchor="middle" fill="#fff" font-size="10">Dioxide</text>
+                <text x="740" y="290" text-anchor="middle" fill="#fff" font-size="11">CATHODE</text>
+                <text x="740" y="310" text-anchor="middle" fill="#fff" font-size="10">(+)</text>
+                
+                <!-- Cathode accepting electrons -->
+                <g transform="translate(680, 350)">
+                    <!-- Incoming electron -->
+                    <circle cx="-10" cy="-20" r="6" fill="#2ecc71" filter="url(#glow)"/>
+                    <text x="-10" y="-17" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">e⁻</text>
+                    <line x1="0" y1="-15" x2="25" y2="0" stroke="#2ecc71" stroke-width="2" marker-end="url(#arrowGreen)"/>
+                    
+                    <!-- MnO2 molecule -->
+                    <circle cx="40" cy="10" r="18" fill="#943126" stroke="#7b241c" stroke-width="2"/>
+                    <text x="40" y="6" text-anchor="middle" fill="white" font-size="8">MnO₂</text>
+                    <text x="40" y="18" text-anchor="middle" fill="white" font-size="7">+H₂O</text>
+                </g>
+                
+                <!-- Electron deficit at cathode -->
+                <text x="740" y="500" text-anchor="middle" fill="#e74c3c" font-size="10">Low e⁻ pressure</text>
+                <text x="740" y="515" text-anchor="middle" fill="#e74c3c" font-size="10">(wants electrons!)</text>
+                
+                <!-- ==================== ELECTROLYTE (KOH solution) ==================== -->
+                <rect x="320" y="200" width="360" height="300" fill="#f39c12" opacity="0.15"/>
+                <text x="500" y="230" text-anchor="middle" fill="#f39c12" font-weight="bold" font-size="14">ELECTROLYTE</text>
+                <text x="500" y="250" text-anchor="middle" fill="#f39c12" font-size="12">(KOH - Potassium Hydroxide solution)</text>
+                
+                <!-- K+ ions (moving toward cathode) -->
+                <circle cx="380" cy="300" r="12" fill="#f39c12" class="drifting-ion"/>
+                <text x="380" y="304" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">K⁺</text>
+                
+                <circle cx="450" cy="350" r="12" fill="#f39c12" class="drifting-ion" style="animation-delay: -1s"/>
+                <text x="450" y="354" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">K⁺</text>
+                
+                <circle cx="520" cy="300" r="12" fill="#f39c12" class="drifting-ion" style="animation-delay: -0.5s"/>
+                <text x="520" y="304" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">K⁺</text>
+                
+                <circle cx="590" cy="380" r="12" fill="#f39c12" class="drifting-ion" style="animation-delay: -1.5s"/>
+                <text x="590" y="384" text-anchor="middle" fill="#000" font-size="9" font-weight="bold">K⁺</text>
+                
+                <!-- OH- ions (moving toward anode) -->
+                <circle cx="400" cy="400" r="14" fill="#9b59b6"/>
+                <text x="400" y="404" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">OH⁻</text>
+                
+                <circle cx="480" cy="420" r="14" fill="#9b59b6"/>
+                <text x="480" y="424" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">OH⁻</text>
+                
+                <circle cx="560" cy="330" r="14" fill="#9b59b6"/>
+                <text x="560" y="334" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">OH⁻</text>
+                
+                <circle cx="620" cy="400" r="14" fill="#9b59b6"/>
+                <text x="620" y="404" text-anchor="middle" fill="#fff" font-size="9" font-weight="bold">OH⁻</text>
+                
+                <!-- Zn2+ ions in solution -->
+                <circle cx="350" cy="350" r="12" fill="#5dade2" opacity="0.8"/>
+                <text x="350" y="354" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">Zn²⁺</text>
+                
+                <circle cx="420" cy="280" r="12" fill="#5dade2" opacity="0.8"/>
+                <text x="420" y="284" text-anchor="middle" fill="#000" font-size="8" font-weight="bold">Zn²⁺</text>
+                
+                <!-- Ion flow arrows inside electrolyte -->
+                <line x1="400" y1="470" x2="330" y2="470" stroke="#9b59b6" stroke-width="2" marker-end="url(#arrowOrange)" style="transform: scaleX(-1); transform-origin: 365px 470px;"/>
+                <text x="365" y="490" text-anchor="middle" fill="#9b59b6" font-size="10">OH⁻ → anode</text>
+                
+                <line x1="580" y1="470" x2="660" y2="470" stroke="#f39c12" stroke-width="2" marker-end="url(#arrowOrange)"/>
+                <text x="620" y="490" text-anchor="middle" fill="#f39c12" font-size="10">K⁺ → cathode</text>
+                
+                <!-- Barrier notation -->
+                <text x="500" y="520" text-anchor="middle" fill="#888" font-size="11" font-style="italic">Electrolyte conducts IONS, not electrons</text>
+                
+                <!-- ==================== EXTERNAL CIRCUIT (Wire + Bulb) ==================== -->
+                
+                <!-- Wire from anode (going up and right) -->
+                <path d="M 270 180 L 270 80 L 450 80" stroke="url(#wireGradient)" stroke-width="8" fill="none" stroke-linecap="round"/>
+                
+                <!-- Light bulb -->
+                <ellipse cx="500" cy="80" rx="50" ry="35" fill="#fffde7" opacity="0.9" filter="url(#glow)"/>
+                <ellipse cx="500" cy="80" rx="40" ry="28" fill="#fff9c4" opacity="0.8"/>
+                <path d="M 470 105 Q 500 130 530 105" stroke="#666" stroke-width="3" fill="none"/>
+                <line x1="485" y1="115" x2="485" y2="125" stroke="#666" stroke-width="2"/>
+                <line x1="515" y1="115" x2="515" y2="125" stroke="#666" stroke-width="2"/>
+                <text x="500" y="85" text-anchor="middle" fill="#666" font-size="12" font-weight="bold">LOAD</text>
+                
+                <!-- Filament inside bulb -->
+                <path d="M 480 75 Q 490 65 500 75 Q 510 85 520 75" stroke="#ff9800" stroke-width="3" fill="none" filter="url(#glow)"/>
+                
+                <!-- Wire from bulb to cathode -->
+                <path d="M 550 80 L 730 80 L 730 180" stroke="url(#wireGradient)" stroke-width="8" fill="none" stroke-linecap="round"/>
+                
+                <!-- Electron flow indication on wire -->
+                <g fill="#2ecc71">
+                    <!-- Electrons moving through wire (animated positions) -->
+                    <circle cx="270" cy="130" r="6" filter="url(#glow)">
+                        <animate attributeName="cy" values="180;80;80;80" dur="4s" repeatCount="indefinite"/>
+                        <animate attributeName="cx" values="270;270;500;730" dur="4s" repeatCount="indefinite"/>
+                    </circle>
+                    <circle cx="350" cy="80" r="6" filter="url(#glow)">
+                        <animate attributeName="cx" values="270;400;600;730" dur="4s" repeatCount="indefinite" begin="-1s"/>
+                    </circle>
+                    <circle cx="500" cy="80" r="6" filter="url(#glow)">
+                        <animate attributeName="cx" values="270;450;650;730" dur="4s" repeatCount="indefinite" begin="-2s"/>
+                    </circle>
+                    <circle cx="650" cy="80" r="6" filter="url(#glow)">
+                        <animate attributeName="cx" values="270;350;550;730" dur="4s" repeatCount="indefinite" begin="-3s"/>
+                    </circle>
+                </g>
+                
+                <!-- Electron flow arrow -->
+                <line x1="350" y1="55" x2="650" y2="55" stroke="#2ecc71" stroke-width="3" marker-end="url(#arrowGreen)"/>
+                <text x="500" y="45" text-anchor="middle" fill="#2ecc71" font-size="12" font-weight="bold">ELECTRON FLOW (e⁻)</text>
+                
+                <!-- Conventional current arrow (opposite direction) -->
+                <line x1="650" y1="30" x2="350" y2="30" stroke="#e74c3c" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrowRed)"/>
+                <text x="500" y="22" text-anchor="middle" fill="#e74c3c" font-size="10">(Conventional current I)</text>
+                
+                <!-- Terminal labels -->
+                <rect x="250" y="155" width="40" height="25" fill="#3498db" rx="3"/>
+                <text x="270" y="172" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">−</text>
+                
+                <rect x="710" y="155" width="40" height="25" fill="#e74c3c" rx="3"/>
+                <text x="730" y="172" text-anchor="middle" fill="#fff" font-size="14" font-weight="bold">+</text>
+                
+                <!-- Voltage indication -->
+                <text x="500" y="570" text-anchor="middle" fill="#fff" font-size="13">⚡ Potential Difference: ~1.5V</text>
+                
+                <!-- ==================== ANNOTATIONS ==================== -->
+                
+                <!-- Wire detail box -->
+                <rect x="830" y="60" width="150" height="80" fill="rgba(0,0,0,0.5)" rx="8" stroke="#2ecc71" stroke-width="1"/>
+                <text x="905" y="82" text-anchor="middle" fill="#2ecc71" font-size="11" font-weight="bold">IN THE WIRE:</text>
+                <text x="905" y="100" text-anchor="middle" fill="#ccc" font-size="9">Free electrons drift</text>
+                <text x="905" y="115" text-anchor="middle" fill="#ccc" font-size="9">slowly (~0.1 mm/s)</text>
+                <text x="905" y="130" text-anchor="middle" fill="#ccc" font-size="9">but signal is instant!</text>
+                
+            </svg>
+        </div>
+        
+        <div class="legend-grid">
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #2ecc71;">e⁻</div>
+                <span>Electrons (negative charge carriers)</span>
             </div>
-            <div class="electrolyte">
-                <div class="ion k-ion">K⁺</div>
-                <div class="ion oh-ion">OH⁻</div>
-                <div class="ion k-ion">K⁺</div>
-                <div class="ion oh-ion">OH⁻</div>
-                <div class="ion k-ion">K⁺</div>
-                <div class="ion oh-ion">OH⁻</div>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #f39c12;">K⁺</div>
+                <span>Potassium ions (positive)</span>
             </div>
-            <div class="cathode">
-                <span class="cathode-label">MnO₂<br>CATHODE</span>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #9b59b6;">OH⁻</div>
+                <span>Hydroxide ions (negative)</span>
             </div>
-        </div>
-        
-        <!-- Wires -->
-        <div class="wire wire-top-left"></div>
-        <div class="wire wire-top"></div>
-        <div class="wire wire-top-right"></div>
-        <div class="wire wire-bottom-left"></div>
-        <div class="wire wire-bottom"></div>
-        <div class="wire wire-bottom-right"></div>
-        
-        <!-- Light bulb -->
-        <div class="bulb-container">
-            <div class="bulb"></div>
-            <div class="bulb-base"></div>
-            <div class="bulb-label">💡 Light Bulb</div>
-        </div>
-        
-        <!-- Electrons flowing -->
-        <div class="electron electron-flow-top" style="animation-delay: 0s;">e⁻</div>
-        <div class="electron electron-flow-top" style="animation-delay: 1s;">e⁻</div>
-        <div class="electron electron-flow-top" style="animation-delay: 2s;">e⁻</div>
-        <div class="electron electron-flow-top" style="animation-delay: 3s;">e⁻</div>
-        
-        <div class="electron electron-flow-right" style="animation-delay: 0s;">e⁻</div>
-        <div class="electron electron-flow-right" style="animation-delay: 1s;">e⁻</div>
-        
-        <div class="electron electron-flow-bottom" style="animation-delay: 0s;">e⁻</div>
-        <div class="electron electron-flow-bottom" style="animation-delay: 1s;">e⁻</div>
-        <div class="electron electron-flow-bottom" style="animation-delay: 2s;">e⁻</div>
-        <div class="electron electron-flow-bottom" style="animation-delay: 3s;">e⁻</div>
-        
-        <div class="electron electron-flow-left" style="animation-delay: 0s;">e⁻</div>
-        <div class="electron electron-flow-left" style="animation-delay: 1s;">e⁻</div>
-        
-        <!-- Chemical equations -->
-        <div class="equation-box anode-equation">
-            <div class="equation-title" style="color: #95a5a6;">⚡ At the Anode (Oxidation)</div>
-            <div class="equation">Zn + 2OH⁻ → Zn(OH)₂ + 2e⁻</div>
-            <div class="equation-note">Zinc gives up electrons → they accumulate on the negative terminal</div>
-        </div>
-        
-        <div class="equation-box cathode-equation">
-            <div class="equation-title" style="color: #bdc3c7;">⚡ At the Cathode (Reduction)</div>
-            <div class="equation">2MnO₂ + 2H₂O + 2e⁻ → 2MnOOH + 2OH⁻</div>
-            <div class="equation-note">MnO₂ accepts electrons arriving through the wire</div>
-        </div>
-        
-        <!-- Legend -->
-        <div class="legend">
-            <div class="legend-item"><div class="legend-dot electron"></div> Electrons (e⁻)</div>
-            <div class="legend-item"><div class="legend-dot k"></div> K⁺ ions</div>
-            <div class="legend-item"><div class="legend-dot oh"></div> OH⁻ ions</div>
+            <div class="legend-item">
+                <div class="legend-symbol" style="background: #5dade2;">Zn²⁺</div>
+                <span>Zinc ions (from oxidation)</span>
+            </div>
         </div>
     </div>
     
-    <div class="info-panel">
-        <div class="info-card">
-            <h3><span class="step-number">1</span> Anode Reaction</h3>
-            <p>Zinc atoms at the electrode surface <span class="highlight">give up 2 electrons each</span>. These electrons accumulate on the electrode — creating high "electron pressure" at the negative terminal.</p>
+    <!-- Detailed explanations -->
+    <div class="sections-container">
+        
+        <!-- ANODE SECTION -->
+        <div class="section-box anode">
+            <h2>🔵 Anode (Negative Terminal) - Oxidation</h2>
+            
+            <div class="equation-box">
+                Zn + 2OH⁻ → Zn(OH)₂ + 2e⁻
+            </div>
+            
+            <div class="explanation">
+                <p><span class="highlight highlight-blue">Oxidation</span> = losing electrons</p>
+                
+                <p>Each zinc atom at the electrode surface reacts with two hydroxide ions (OH⁻) from the electrolyte. The zinc <span class="highlight highlight-blue">gives up 2 electrons</span> and becomes a zinc hydroxide molecule.</p>
+                
+                <p>Those released electrons <span class="highlight highlight-green">accumulate on the electrode</span>, creating high "electron pressure." They desperately want to leave but can't go through the electrolyte - they must go through the external wire.</p>
+                
+                <p>The zinc electrode slowly dissolves as this happens (that's why batteries die - the zinc gets used up).</p>
+            </div>
         </div>
-        <div class="info-card">
-            <h3><span class="step-number">2</span> External Circuit</h3>
-            <p>Electrons can't flow through the electrolyte (it only conducts ions). They're <span class="highlight">forced through the wire</span> — the only available path. The effect propagates at near light speed!</p>
+        
+        <!-- CATHODE SECTION -->
+        <div class="section-box cathode">
+            <h2>🔴 Cathode (Positive Terminal) - Reduction</h2>
+            
+            <div class="equation-box">
+                2MnO₂ + 2H₂O + 2e⁻ → 2MnOOH + 2OH⁻
+            </div>
+            
+            <div class="explanation">
+                <p><span class="highlight highlight-red">Reduction</span> = gaining electrons</p>
+                
+                <p>Manganese dioxide at the cathode <span class="highlight highlight-red">accepts electrons</span> that arrive through the external wire. It combines with water and electrons to form MnOOH and regenerates hydroxide ions.</p>
+                
+                <p>This electrode has a deficit of electrons - it's chemically "hungry" for them. This creates low "electron pressure" compared to the anode.</p>
+                
+                <p>The difference in pressure between anode (high) and cathode (low) is what we call <span class="highlight">voltage</span> - about 1.5V for this chemistry.</p>
+            </div>
         </div>
-        <div class="info-card">
-            <h3><span class="step-number">3</span> The Light Bulb</h3>
-            <p>Electrons lose energy forcing through the high-resistance filament. That energy becomes <span class="highlight">heat and light</span>. Same electrons exit — just with less energy.</p>
+        
+        <!-- ELECTROLYTE SECTION -->
+        <div class="section-box electrolyte">
+            <h2>🟡 Electrolyte - The Ion Highway</h2>
+            
+            <div class="explanation">
+                <p>The electrolyte (KOH dissolved in water) serves a <span class="highlight highlight-yellow">critical purpose</span>: it conducts <strong>ions</strong> but NOT electrons.</p>
+                
+                <p>This is what forces electrons to go the "long way" through the external circuit. If electrons could go directly through the electrolyte, the battery would short-circuit internally and produce heat instead of useful work.</p>
+                
+                <p><span class="highlight highlight-yellow">K⁺ ions</span> drift toward the cathode (attracted to the electron-rich area).</p>
+                
+                <p><span class="highlight" style="color: #9b59b6;">OH⁻ ions</span> drift toward the anode (attracted to the electron-depleted Zn²⁺ ions being created).</p>
+                
+                <p>This ion flow <span class="highlight">completes the circuit internally</span> while keeping electrons confined to the external path.</p>
+            </div>
         </div>
-        <div class="info-card">
-            <h3><span class="step-number">4</span> Cathode Reaction</h3>
-            <p>MnO₂ <span class="highlight">accepts the electrons</span> arriving through the wire. It combines with water and electrons, regenerating OH⁻ ions for the electrolyte.</p>
+        
+        <!-- WIRE/LOAD SECTION -->
+        <div class="section-box wire">
+            <h2>🟢 External Circuit - Where Work Happens</h2>
+            
+            <div class="explanation">
+                <p>The wire provides a path for the <span class="highlight highlight-green">free electrons</span> in copper to drift from the high-pressure anode to the low-pressure cathode.</p>
+                
+                <p>The light bulb (load) has a thin filament - a resistor. Electrons lose energy pushing through it. That energy becomes <span class="highlight">heat → light</span>.</p>
+                
+                <p>Remember: individual electrons move slowly (~0.1 mm/s). But the "push" propagates instantly because the wire is already full of electrons. Push one in, one comes out the other end immediately.</p>
+                
+                <p><span class="highlight highlight-green">Energy flow:</span><br/>
+                Chemical energy (Zn bonds) → Electrical potential energy → Kinetic energy (electron flow) → Heat/Light (in bulb)</p>
+            </div>
         </div>
-        <div class="info-card">
-            <h3><span class="step-number">5</span> Ion Transport</h3>
-            <p>Inside the electrolyte, <span class="highlight">ions carry the charge</span>: K⁺ drifts toward the cathode, OH⁻ drifts toward the anode. This completes the circuit without electrons crossing!</p>
+        
+        <!-- FULL CYCLE SECTION -->
+        <div class="section-box full-width-section">
+            <h2>🔄 The Complete Cycle - Everything Balanced</h2>
+            
+            <div class="timeline">
+                <div class="timeline-step">
+                    <div class="number">1</div>
+                    <div class="label">Zn oxidizes, releases e⁻ at anode</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="number">2</div>
+                    <div class="label">e⁻ flow through wire to bulb</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="number">3</div>
+                    <div class="label">e⁻ lose energy in filament (light!)</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="number">4</div>
+                    <div class="label">e⁻ arrive at cathode, reduce MnO₂</div>
+                </div>
+                <div class="timeline-step">
+                    <div class="number">5</div>
+                    <div class="label">Ions move in electrolyte to balance charge</div>
+                </div>
+            </div>
+            
+            <div class="key-insight">
+                <h3>💡 The Key Insight: Conservation</h3>
+                <p><strong>Charge is conserved:</strong> Every electron that leaves the anode arrives at the cathode. Nothing is created or destroyed - charge just moves in a circle.</p>
+                <p style="margin-top: 10px;"><strong>Energy is conserved:</strong> Chemical bond energy (stored in zinc) is converted to electrical energy, then to heat/light. The total is constant - we're just transforming it from one form to another.</p>
+                <p style="margin-top: 10px;"><strong>Mass is conserved:</strong> Zinc atoms become zinc ions in solution. MnO₂ becomes MnOOH. Atoms rearrange but don't disappear. When the zinc runs out, the battery is dead.</p>
+            </div>
         </div>
-        <div class="info-card">
-            <h3><span class="step-number">6</span> What Gets Used Up?</h3>
-            <p><span class="highlight">Electrons circulate forever</span> — they're not consumed. The battery dies when the <span class="highlight">chemical reactants</span> (zinc, MnO₂) are exhausted.</p>
-        </div>
+        
     </div>
 </body>
 </html>
