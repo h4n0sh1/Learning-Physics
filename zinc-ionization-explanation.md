@@ -5,6 +5,10 @@
 ### 1. Zinc’s Atomic Structure
 - **Zinc (Zn)** has atomic number 30: [Ar] 3d¹⁰ 4s².
 - The two 4s electrons are loosely held and are the first to be lost during ionization.
+ - **Zinc (Zn)** has atomic number 30: [Ar] 3d¹⁰ 4s².
+
+   > **Notation reminder:** [Ar] stands for the electron configuration of argon (the previous noble gas), so [Ar] 3d¹⁰ 4s² means zinc has the same inner electrons as argon, plus 10 electrons in the 3d subshell and 2 in the 4s subshell (the outermost electrons).
+ - The two 4s electrons are loosely held and are the first to be lost during ionization.
 
 ### 2. Energy Levels & Ionization
 - **Ionization energy** is required to remove electrons from Zn.
