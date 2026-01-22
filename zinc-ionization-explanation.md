@@ -21,7 +21,7 @@
 
 ### 4. Role of Hydroxide Ions (OH⁻)
   $$
-  	ext{Zn} \rightarrow \text{Zn}^{2+} + 2e^{-}
+  \text{Zn} \rightarrow \text{Zn}^{2+} + 2e^{-}
   $$
   $$
   \text{Zn}^{2+} + 2\text{OH}^- \rightarrow \text{Zn(OH)}_2
