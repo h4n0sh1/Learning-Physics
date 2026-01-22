@@ -53,4 +53,4 @@ Zinc ionizes in an alkaline battery because the external circuit provides a path
 
 ---
 
-**See the visualization in [visualizations/zinc-ionization-atomic.html](visualizations/zinc-ionization-atomic.html) for an animated atomic-level view of this process.**
+**See the visualization in [Zinc Ionization Visualization](https://h4n0sh1.github.io/Learning-Physics/visualizations/zinc-ionization-atomic.html) for an animated atomic-level view of this process.**
