@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zinc Ionization in Alkaline Battery Visualization</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+    .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 32px; }
+    h1 { text-align: center; color: #2a4d7c; }
+    .scene { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
+    .atom, .ion, .electron, .oh { position: relative; }
+    .atom { width: 80px; height: 80px; background: #b0c4de; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: #2a4d7c; box-shadow: 0 0 10px #b0c4de; }
+    .electron { width: 18px; height: 18px; background: #ffd700; border-radius: 50%; position: absolute; left: 80px; top: 30px; animation: moveElectron 2s linear infinite; }
+    @keyframes moveElectron {
+      0% { left: 80px; top: 30px; opacity: 1; }
+      60% { left: 180px; top: 0px; opacity: 1; }
+      100% { left: 300px; top: -10px; opacity: 0; }
+    }
+    .oh { width: 60px; height: 60px; background: #90ee90; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1em; color: #2a4d7c; margin-left: 20px; box-shadow: 0 0 8px #90ee90; }
+    .ion { width: 80px; height: 80px; background: #4682b4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: #fff; margin-left: 40px; box-shadow: 0 0 10px #4682b4; }
+    .arrow { font-size: 2em; color: #2a4d7c; margin: 0 20px; }
+    .energy { margin-top: 40px; text-align: center; }
+    .energy-bar { width: 300px; height: 24px; background: #eee; border-radius: 12px; margin: 0 auto; position: relative; }
+    .energy-bar-inner { width: 80%; height: 100%; background: #2a4d7c; border-radius: 12px; position: absolute; left: 0; top: 0; transition: width 1s; }
+    .energy-label { position: absolute; left: 50%; top: -28px; transform: translateX(-50%); color: #2a4d7c; font-weight: bold; }
+    .energy-bar-lowered { width: 40%; background: #90ee90; }
+    .energy-label-lowered { top: 32px; color: #90ee90; }
+    .caption { text-align: center; margin-top: 16px; color: #555; }
+    .step { margin-top: 32px; font-size: 1.1em; color: #2a4d7c; }
+    .highlight { background: #ffd700; padding: 2px 6px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Atomic-Level Zinc Ionization in Alkaline Battery</h1>
+    <div class="scene">
+      <div class="atom">
+        Zn<br><span style="font-size:0.8em;">(4s²)</span>
+        <div class="electron"></div>
+      </div>
+      <span class="arrow">→</span>
+      <div class="ion">
+        Zn<sup>2+</sup><br><span style="font-size:0.8em;">(lost 2e⁻)</span>
+      </div>
+      <span class="arrow">+</span>
+      <div class="oh">2OH⁻</div>
+      <span class="arrow">→</span>
+      <div class="ion">
+        Zn(OH)<sub>2</sub>
+      </div>
+    </div>
+    <div class="caption">Electrons (yellow) leave Zn atom, travel through the wire. Zn²⁺ immediately binds with OH⁻ to form Zn(OH)₂.</div>
+    <div class="energy">
+      <div class="energy-bar">
+        <div class="energy-bar-inner"></div>
+        <div class="energy-label">Energy barrier for electron loss</div>
+        <div class="energy-bar-inner energy-bar-lowered" style="left:160px;"></div>
+        <div class="energy-label energy-label-lowered" style="left:220px;">Barrier lowered by circuit & OH⁻</div>
+      </div>
+    </div>
+    <div class="step"><span class="highlight">Step 1:</span> Zn atom at surface, 4s electrons are loosely held.</div>
+    <div class="step"><span class="highlight">Step 2:</span> OH⁻ ions approach, ready to stabilize Zn²⁺.</div>
+    <div class="step"><span class="highlight">Step 3:</span> External circuit "pulls" electrons away, lowering energy barrier.</div>
+    <div class="step"><span class="highlight">Step 4:</span> Zn atom loses 2 electrons, becomes Zn²⁺.</div>
+    <div class="step"><span class="highlight">Step 5:</span> Zn²⁺ binds with 2OH⁻ to form Zn(OH)₂, removing Zn²⁺ from solution and driving more electron loss.</div>
+  </div>
+</body>
+</html>
