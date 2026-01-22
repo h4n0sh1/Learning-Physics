@@ -2,67 +2,945 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Zinc Ionization in Alkaline Battery Visualization</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zinc Ionization: Atomic & Energy Level Analysis</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
-    .container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); padding: 32px; }
-    h1 { text-align: center; color: #2a4d7c; }
-    .scene { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 40px; }
-    .atom, .ion, .electron, .oh { position: relative; }
-    .atom { width: 80px; height: 80px; background: #b0c4de; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: #2a4d7c; box-shadow: 0 0 10px #b0c4de; }
-    .electron { width: 18px; height: 18px; background: #ffd700; border-radius: 50%; position: absolute; left: 80px; top: 30px; animation: moveElectron 2s linear infinite; }
-    @keyframes moveElectron {
-      0% { left: 80px; top: 30px; opacity: 1; }
-      60% { left: 180px; top: 0px; opacity: 1; }
-      100% { left: 300px; top: -10px; opacity: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Georgia', 'Times New Roman', serif;
+      background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+      color: #e8e8e8;
+      min-height: 100vh;
+      padding: 20px;
     }
-    .oh { width: 60px; height: 60px; background: #90ee90; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1em; color: #2a4d7c; margin-left: 20px; box-shadow: 0 0 8px #90ee90; }
-    .ion { width: 80px; height: 80px; background: #4682b4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2em; color: #fff; margin-left: 40px; box-shadow: 0 0 10px #4682b4; }
-    .arrow { font-size: 2em; color: #2a4d7c; margin: 0 20px; }
-    .energy { margin-top: 40px; text-align: center; }
-    .energy-bar { width: 300px; height: 24px; background: #eee; border-radius: 12px; margin: 0 auto; position: relative; }
-    .energy-bar-inner { width: 80%; height: 100%; background: #2a4d7c; border-radius: 12px; position: absolute; left: 0; top: 0; transition: width 1s; }
-    .energy-label { position: absolute; left: 50%; top: -28px; transform: translateX(-50%); color: #2a4d7c; font-weight: bold; }
-    .energy-bar-lowered { width: 40%; background: #90ee90; }
-    .energy-label-lowered { top: 32px; color: #90ee90; }
-    .caption { text-align: center; margin-top: 16px; color: #555; }
-    .step { margin-top: 32px; font-size: 1.1em; color: #2a4d7c; }
-    .highlight { background: #ffd700; padding: 2px 6px; border-radius: 4px; }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 1.8em;
+      margin-bottom: 8px;
+      color: #7eb8da;
+      font-weight: normal;
+      letter-spacing: 1px;
+    }
+    .subtitle {
+      text-align: center;
+      font-size: 1em;
+      color: #9ab;
+      margin-bottom: 30px;
+      font-style: italic;
+    }
+    
+    /* Main Layout */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 25px;
+      margin-bottom: 25px;
+    }
+    
+    /* Panels */
+    .panel {
+      background: rgba(20, 35, 60, 0.85);
+      border: 1px solid #2a4a6a;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .panel-title {
+      font-size: 1.1em;
+      color: #7eb8da;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2a4a6a;
+    }
+    
+    /* Electron Configuration Display */
+    .config-display {
+      font-family: 'Courier New', monospace;
+      font-size: 1.3em;
+      text-align: center;
+      padding: 15px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .config-display .noble-gas { color: #f0a040; }
+    .config-display .d-orbital { color: #60c060; }
+    .config-display .s-orbital { color: #ff6b6b; }
+    
+    /* Energy Level Diagram */
+    .energy-diagram {
+      position: relative;
+      height: 320px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      padding: 15px;
+    }
+    .energy-axis {
+      position: absolute;
+      left: 40px;
+      top: 20px;
+      bottom: 40px;
+      width: 2px;
+      background: linear-gradient(to top, #446, #88a);
+    }
+    .energy-label {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: rotate(-90deg) translateX(50%);
+      font-size: 0.85em;
+      color: #9ab;
+      white-space: nowrap;
+    }
+    .orbital-level {
+      position: absolute;
+      left: 60px;
+      right: 20px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+    .orbital-label {
+      width: 50px;
+      font-size: 0.9em;
+      color: #aac;
+    }
+    .orbital-line {
+      flex: 1;
+      height: 3px;
+      background: #4a6a8a;
+      position: relative;
+      margin-right: 10px;
+    }
+    .orbital-energy {
+      font-size: 0.8em;
+      color: #8a8;
+      width: 70px;
+      text-align: right;
+    }
+    
+    /* Electron boxes in orbitals */
+    .electron-boxes {
+      position: absolute;
+      top: -18px;
+      left: 0;
+      display: flex;
+      gap: 3px;
+    }
+    .e-box {
+      width: 28px;
+      height: 36px;
+      border: 1px solid #5a7a9a;
+      background: rgba(30,50,80,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.9em;
+    }
+    .arrow-up { color: #ff6b6b; }
+    .arrow-down { color: #6b9fff; }
+    
+    /* Valence electrons highlight */
+    .valence-highlight {
+      position: absolute;
+      right: 85px;
+      top: -5px;
+      bottom: -5px;
+      width: 80px;
+      border: 2px dashed #ff6b6b;
+      border-radius: 5px;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+    .valence-highlight.active { opacity: 1; }
+    .valence-label {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75em;
+      color: #ff6b6b;
+      white-space: nowrap;
+    }
+    
+    /* Atomic Model */
+    .atom-container {
+      position: relative;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .nucleus {
+      width: 50px;
+      height: 50px;
+      background: radial-gradient(circle at 30% 30%, #ff8844, #aa4400);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.1em;
+      color: white;
+      z-index: 10;
+      box-shadow: 0 0 20px rgba(255,136,68,0.5);
+    }
+    .shell {
+      position: absolute;
+      border: 1px dashed rgba(100,150,200,0.4);
+      border-radius: 50%;
+    }
+    .shell-1 { width: 90px; height: 90px; }
+    .shell-2 { width: 140px; height: 140px; }
+    .shell-3 { width: 200px; height: 200px; }
+    .shell-4 { width: 260px; height: 260px; border-color: rgba(255,107,107,0.6); border-width: 2px; }
+    
+    .shell-label {
+      position: absolute;
+      font-size: 0.75em;
+      color: #8ab;
+    }
+    
+    /* Orbiting electrons */
+    .electron {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: radial-gradient(circle at 30% 30%, #6bdfff, #2080c0);
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(107,223,255,0.8);
+    }
+    .electron.valence {
+      background: radial-gradient(circle at 30% 30%, #ff8888, #cc4444);
+      box-shadow: 0 0 12px rgba(255,100,100,0.9);
+      width: 14px;
+      height: 14px;
+    }
+    .electron.leaving {
+      animation: electronLeave 2s ease-in forwards;
+    }
+    @keyframes electronLeave {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(200px, -100px); opacity: 0; }
+    }
+    
+    /* Ionization Energy Panel */
+    .ionization-section {
+      margin-top: 20px;
+    }
+    .ie-bar-container {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+    }
+    .ie-label {
+      width: 120px;
+      font-size: 0.9em;
+    }
+    .ie-bar {
+      flex: 1;
+      height: 24px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+    .ie-fill {
+      height: 100%;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+      font-size: 0.8em;
+      color: white;
+      transition: width 1s ease;
+    }
+    .ie-1 { background: linear-gradient(90deg, #2a6a4a, #4a9a6a); width: 45%; }
+    .ie-2 { background: linear-gradient(90deg, #4a6a8a, #6a9aba); width: 92%; }
+    
+    /* Electrochemical Context */
+    .cell-diagram {
+      position: relative;
+      height: 180px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      margin-top: 15px;
+      overflow: hidden;
+    }
+    .anode-region, .cathode-region {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 45%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+    .anode-region {
+      left: 0;
+      background: linear-gradient(90deg, rgba(80,80,80,0.3), transparent);
+      border-right: 3px solid #666;
+    }
+    .cathode-region {
+      right: 0;
+      background: linear-gradient(-90deg, rgba(60,40,20,0.3), transparent);
+      border-left: 3px solid #8b4513;
+    }
+    .electrode-label {
+      font-size: 0.85em;
+      margin-bottom: 5px;
+    }
+    .electrode-name {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    .electrode-reaction {
+      font-size: 0.75em;
+      margin-top: 8px;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+      color: #aac;
+    }
+    .electrolyte {
+      position: absolute;
+      left: 45%;
+      right: 45%;
+      top: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, rgba(100,180,255,0.1), rgba(100,180,255,0.2));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.8em;
+      color: #8bd;
+    }
+    .wire {
+      position: absolute;
+      top: -5px;
+      left: 22%;
+      right: 22%;
+      height: 20px;
+      border: 3px solid #b87333;
+      border-bottom: none;
+      border-radius: 15px 15px 0 0;
+    }
+    .electron-flow {
+      position: absolute;
+      top: 5px;
+      animation: flowElectron 2s linear infinite;
+    }
+    @keyframes flowElectron {
+      0% { left: 25%; opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { left: 75%; opacity: 0; }
+    }
+    
+    /* Process Steps */
+    .process-panel {
+      grid-column: 1 / -1;
+    }
+    .step-container {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .step {
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      padding: 15px;
+      text-align: center;
+      border: 1px solid transparent;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .step:hover, .step.active {
+      border-color: #7eb8da;
+      background: rgba(50,80,120,0.3);
+    }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: #2a4a6a;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto 10px;
+      font-size: 0.9em;
+    }
+    .step.active .step-num {
+      background: #7eb8da;
+      color: #0a1628;
+    }
+    .step-title {
+      font-size: 0.85em;
+      margin-bottom: 5px;
+      color: #7eb8da;
+    }
+    .step-desc {
+      font-size: 0.75em;
+      color: #9ab;
+      line-height: 1.4;
+    }
+    
+    /* Energy Diagram Panel */
+    .gibbs-diagram {
+      position: relative;
+      height: 200px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 5px;
+      padding: 20px;
+      margin-top: 15px;
+    }
+    .gibbs-axis-y {
+      position: absolute;
+      left: 40px;
+      top: 20px;
+      bottom: 30px;
+      width: 2px;
+      background: #668;
+    }
+    .gibbs-axis-x {
+      position: absolute;
+      left: 40px;
+      right: 20px;
+      bottom: 30px;
+      height: 2px;
+      background: #668;
+    }
+    .gibbs-label-y {
+      position: absolute;
+      left: 5px;
+      top: 50%;
+      transform: rotate(-90deg) translateX(50%);
+      font-size: 0.8em;
+      color: #9ab;
+    }
+    .gibbs-label-x {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.8em;
+      color: #9ab;
+    }
+    .energy-curve {
+      position: absolute;
+      left: 60px;
+      right: 40px;
+      top: 40px;
+      bottom: 50px;
+    }
+    .energy-state {
+      position: absolute;
+      height: 4px;
+      background: #4a8ada;
+      border-radius: 2px;
+    }
+    .state-reactants {
+      left: 0;
+      width: 25%;
+      top: 30%;
+    }
+    .state-transition {
+      left: 35%;
+      width: 20%;
+      top: 10%;
+      background: #da6a4a;
+    }
+    .state-products {
+      right: 0;
+      width: 25%;
+      top: 60%;
+      background: #4ada6a;
+    }
+    .state-label {
+      position: absolute;
+      font-size: 0.7em;
+      color: #aac;
+      white-space: nowrap;
+    }
+    .delta-g {
+      position: absolute;
+      right: 30%;
+      top: 35%;
+      bottom: 55%;
+      width: 2px;
+      background: #6a6;
+    }
+    .delta-g-label {
+      position: absolute;
+      right: 32%;
+      top: 42%;
+      font-size: 0.8em;
+      color: #6a6;
+    }
+    .delta-g-arrow {
+      position: absolute;
+      right: 29%;
+      top: 58%;
+      font-size: 1.2em;
+      color: #6a6;
+    }
+    
+    /* Controls */
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .btn {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, #2a5a8a, #1a3a5a);
+      border: 1px solid #4a7aaa;
+      color: #cde;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.3s;
+    }
+    .btn:hover {
+      background: linear-gradient(135deg, #3a6a9a, #2a4a6a);
+      border-color: #5a8aba;
+    }
+    .btn.active {
+      background: linear-gradient(135deg, #4a8aba, #3a6a9a);
+    }
+    
+    /* Annotations */
+    .annotation {
+      font-size: 0.8em;
+      color: #9ab;
+      font-style: italic;
+      margin-top: 10px;
+      padding: 10px;
+      background: rgba(0,0,0,0.2);
+      border-left: 3px solid #4a6a8a;
+      border-radius: 0 5px 5px 0;
+    }
+    
+    /* Scientific notation */
+    .sci { font-family: 'Times New Roman', serif; font-style: italic; }
+    .sub { font-size: 0.7em; vertical-align: sub; }
+    .sup { font-size: 0.7em; vertical-align: super; }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #2a4a6a;
+      font-size: 0.85em;
+      color: #668;
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>Atomic-Level Zinc Ionization in Alkaline Battery</h1>
-    <div class="scene">
-      <div class="atom">
-        Zn<br><span style="font-size:0.8em;">(4s²)</span>
-        <div class="electron"></div>
+    <h1>Zinc Ionization in Alkaline Electrochemical Cells</h1>
+    <p class="subtitle">Atomic Structure, Energy Levels & Oxidation Mechanism</p>
+    
+    <div class="main-grid">
+      <!-- Electron Configuration Panel -->
+      <div class="panel">
+        <div class="panel-title">Electron Configuration of Zinc (Z = 30)</div>
+        
+        <div class="config-display">
+          <span class="noble-gas">[Ar]</span> <span class="d-orbital">3d<sup>10</sup></span> <span class="s-orbital">4s<sup>2</sup></span>
+        </div>
+        
+        <div class="energy-diagram" id="energyDiagram">
+          <div class="energy-label">Energy (eV) →</div>
+          <div class="energy-axis"></div>
+          
+          <!-- 1s orbital -->
+          <div class="orbital-level" style="bottom: 250px;">
+            <div class="orbital-label">1s</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−1196 eV</div>
+          </div>
+          
+          <!-- 2s orbital -->
+          <div class="orbital-level" style="bottom: 215px;">
+            <div class="orbital-label">2s</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−141 eV</div>
+          </div>
+          
+          <!-- 2p orbital -->
+          <div class="orbital-level" style="bottom: 180px;">
+            <div class="orbital-label">2p</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−120 eV</div>
+          </div>
+          
+          <!-- 3s orbital -->
+          <div class="orbital-level" style="bottom: 145px;">
+            <div class="orbital-label">3s</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−17.4 eV</div>
+          </div>
+          
+          <!-- 3p orbital -->
+          <div class="orbital-level" style="bottom: 110px;">
+            <div class="orbital-label">3p</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−10.4 eV</div>
+          </div>
+          
+          <!-- 3d orbital -->
+          <div class="orbital-level" style="bottom: 65px;">
+            <div class="orbital-label">3d</div>
+            <div class="orbital-line">
+              <div class="electron-boxes">
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+                <div class="e-box"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+            </div>
+            <div class="orbital-energy">−18.0 eV</div>
+          </div>
+          
+          <!-- 4s orbital (valence) -->
+          <div class="orbital-level" style="bottom: 20px;" id="valenceOrbital">
+            <div class="orbital-label" style="color: #ff6b6b; font-weight: bold;">4s</div>
+            <div class="orbital-line" style="background: #8a4a4a;">
+              <div class="electron-boxes" id="valenceElectrons">
+                <div class="e-box" style="border-color: #ff6b6b;"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>
+              </div>
+              <div class="valence-highlight active">
+                <div class="valence-label">Valence electrons</div>
+              </div>
+            </div>
+            <div class="orbital-energy" style="color: #ff6b6b;">−9.39 eV</div>
+          </div>
+        </div>
+        
+        <div class="annotation">
+          The 4s² electrons have the highest energy (least negative binding energy) and are 
+          therefore the first to be removed during ionization. Note: 3d fills before 4s, but 
+          4s empties before 3d due to effective nuclear charge screening.
+        </div>
       </div>
-      <span class="arrow">→</span>
-      <div class="ion">
-        Zn<sup>2+</sup><br><span style="font-size:0.8em;">(lost 2e⁻)</span>
+      
+      <!-- Atomic Model Panel -->
+      <div class="panel">
+        <div class="panel-title">Bohr-Sommerfeld Atomic Model</div>
+        
+        <div class="atom-container" id="atomContainer">
+          <div class="nucleus">Zn<br><span style="font-size:0.6em;">30+</span></div>
+          <div class="shell shell-1"></div>
+          <div class="shell shell-2"></div>
+          <div class="shell shell-3"></div>
+          <div class="shell shell-4"></div>
+          
+          <!-- Shell labels -->
+          <div class="shell-label" style="top: 50%; right: calc(50% - 155px);">n=4 (2e⁻)</div>
+          <div class="shell-label" style="top: 50%; right: calc(50% - 125px); opacity: 0.6;">n=3</div>
+          <div class="shell-label" style="top: 50%; right: calc(50% - 90px); opacity: 0.4;">n=2</div>
+          
+          <!-- Electrons will be positioned via JS -->
+          <div id="electronContainer"></div>
+        </div>
+        
+        <div class="ionization-section">
+          <div class="panel-title" style="font-size: 1em;">Ionization Energies</div>
+          <div class="ie-bar-container">
+            <div class="ie-label">IE₁ (Zn → Zn⁺)</div>
+            <div class="ie-bar">
+              <div class="ie-fill ie-1">906.4 kJ/mol</div>
+            </div>
+          </div>
+          <div class="ie-bar-container">
+            <div class="ie-label">IE₂ (Zn⁺ → Zn²⁺)</div>
+            <div class="ie-bar">
+              <div class="ie-fill ie-2">1733.3 kJ/mol</div>
+            </div>
+          </div>
+          <div class="annotation">
+            Total energy to form Zn²⁺: <strong>2639.7 kJ/mol</strong><br>
+            This energy is supplied by the overall cell reaction's negative ΔG.
+          </div>
+        </div>
       </div>
-      <span class="arrow">+</span>
-      <div class="oh">2OH⁻</div>
-      <span class="arrow">→</span>
-      <div class="ion">
-        Zn(OH)<sub>2</sub>
+      
+      <!-- Electrochemical Cell Context -->
+      <div class="panel" style="grid-column: 1 / -1;">
+        <div class="panel-title">Electrochemical Cell: Why Ionization Occurs Spontaneously</div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+          <div class="cell-diagram">
+            <div class="wire">
+              <div class="electron-flow">
+                <div class="electron" style="width: 8px; height: 8px;"></div>
+              </div>
+              <div class="electron-flow" style="animation-delay: 0.5s;">
+                <div class="electron" style="width: 8px; height: 8px;"></div>
+              </div>
+              <div class="electron-flow" style="animation-delay: 1s;">
+                <div class="electron" style="width: 8px; height: 8px;"></div>
+              </div>
+            </div>
+            <div class="anode-region">
+              <div class="electrode-label">ANODE (−)</div>
+              <div class="electrode-name" style="color: #aaa;">Zn metal</div>
+              <div class="electrode-reaction">Zn → Zn²⁺ + 2e⁻</div>
+              <div style="font-size: 0.7em; color: #8a8; margin-top: 5px;">E° = −0.76 V</div>
+            </div>
+            <div class="electrolyte">
+              KOH<br>(aq)
+            </div>
+            <div class="cathode-region">
+              <div class="electrode-label">CATHODE (+)</div>
+              <div class="electrode-name" style="color: #cd853f;">MnO₂</div>
+              <div class="electrode-reaction">MnO₂ + H₂O + e⁻ → MnOOH + OH⁻</div>
+              <div style="font-size: 0.7em; color: #8a8; margin-top: 5px;">E° = +0.74 V</div>
+            </div>
+          </div>
+          
+          <div class="gibbs-diagram">
+            <div class="gibbs-label-y">Free Energy (G)</div>
+            <div class="gibbs-label-x">Reaction Coordinate</div>
+            <div class="gibbs-axis-y"></div>
+            <div class="gibbs-axis-x"></div>
+            
+            <div class="energy-curve">
+              <div class="energy-state state-reactants">
+                <div class="state-label" style="top: -25px; left: 0;">Zn + MnO₂</div>
+              </div>
+              <div class="energy-state state-transition">
+                <div class="state-label" style="top: -25px; left: 50%; transform: translateX(-50%);">Transition State</div>
+              </div>
+              <div class="energy-state state-products">
+                <div class="state-label" style="top: 15px; right: 0;">Zn(OH)₂ + MnOOH</div>
+              </div>
+              
+              <!-- Connecting lines -->
+              <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;">
+                <path d="M 12% 32% Q 30% 32%, 45% 12%" stroke="#4a6a8a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+                <path d="M 55% 12% Q 70% 12%, 88% 62%" stroke="#4a6a8a" stroke-width="2" fill="none" stroke-dasharray="5,3"/>
+              </svg>
+            </div>
+            
+            <div class="delta-g"></div>
+            <div class="delta-g-label">ΔG° < 0</div>
+            <div class="delta-g-arrow">↓</div>
+            
+            <div style="position: absolute; bottom: 40px; right: 20px; font-size: 0.75em; color: #8a8;">
+              E°<sub>cell</sub> = 1.50 V<br>
+              ΔG° = −nFE° = −289 kJ/mol
+            </div>
+          </div>
+        </div>
+        
+        <div class="annotation" style="margin-top: 15px;">
+          <strong>Key Insight:</strong> The ionization of Zn requires energy input (IE₁ + IE₂ = 2640 kJ/mol), 
+          but the overall cell reaction releases 289 kJ/mol. How is this possible? The energy is supplied by: 
+          (1) the highly exothermic hydration of Zn²⁺ ions, (2) the precipitation of Zn(OH)₂, and 
+          (3) the reduction of MnO₂ at the cathode. The <em>coupled</em> reactions make the overall process spontaneous.
+        </div>
+      </div>
+      
+      <!-- Step-by-step Process -->
+      <div class="panel process-panel">
+        <div class="panel-title">Atomic-Level Ionization Mechanism</div>
+        
+        <div class="step-container">
+          <div class="step active" data-step="1">
+            <div class="step-num">1</div>
+            <div class="step-title">Surface Zn Atom</div>
+            <div class="step-desc">Zn atom at metal surface. 4s² electrons have highest energy, weakest binding to nucleus.</div>
+          </div>
+          <div class="step" data-step="2">
+            <div class="step-num">2</div>
+            <div class="step-title">OH⁻ Adsorption</div>
+            <div class="step-desc">Hydroxide ions adsorb onto Zn surface, creating local negative charge density.</div>
+          </div>
+          <div class="step" data-step="3">
+            <div class="step-num">3</div>
+            <div class="step-title">Electron Transfer</div>
+            <div class="step-desc">External circuit provides lower-energy path. Electrons tunnel to wire, driven by potential difference.</div>
+          </div>
+          <div class="step" data-step="4">
+            <div class="step-num">4</div>
+            <div class="step-title">Zn²⁺ Formation</div>
+            <div class="step-desc">Loss of 4s² electrons leaves Zn²⁺ with stable [Ar]3d¹⁰ configuration.</div>
+          </div>
+          <div class="step" data-step="5">
+            <div class="step-num">5</div>
+            <div class="step-title">Product Stabilization</div>
+            <div class="step-desc">Zn²⁺ immediately coordinates with OH⁻ to form Zn(OH)₂. Precipitation drives equilibrium forward.</div>
+          </div>
+        </div>
+        
+        <div class="annotation" id="stepAnnotation" style="min-height: 60px; margin-top: 15px;">
+          <strong>Step 1 Details:</strong> In metallic zinc, 4s electrons are delocalized across the metal lattice 
+          (metallic bonding). Surface atoms have dangling bonds and reduced coordination, making their 
+          valence electrons more accessible for oxidation. The work function of Zn is 4.3 eV.
+        </div>
       </div>
     </div>
-    <div class="caption">Electrons (yellow) leave Zn atom, travel through the wire. Zn²⁺ immediately binds with OH⁻ to form Zn(OH)₂.</div>
-    <div class="energy">
-      <div class="energy-bar">
-        <div class="energy-bar-inner"></div>
-        <div class="energy-label">Energy barrier for electron loss</div>
-        <div class="energy-bar-inner energy-bar-lowered" style="left:160px;"></div>
-        <div class="energy-label energy-label-lowered" style="left:220px;">Barrier lowered by circuit & OH⁻</div>
-      </div>
+    
+    <div class="controls">
+      <button class="btn" id="animateBtn">▶ Animate Ionization</button>
+      <button class="btn" id="resetBtn">↺ Reset</button>
     </div>
-    <div class="step"><span class="highlight">Step 1:</span> Zn atom at surface, 4s electrons are loosely held.</div>
-    <div class="step"><span class="highlight">Step 2:</span> OH⁻ ions approach, ready to stabilize Zn²⁺.</div>
-    <div class="step"><span class="highlight">Step 3:</span> External circuit "pulls" electrons away, lowering energy barrier.</div>
-    <div class="step"><span class="highlight">Step 4:</span> Zn atom loses 2 electrons, becomes Zn²⁺.</div>
-    <div class="step"><span class="highlight">Step 5:</span> Zn²⁺ binds with 2OH⁻ to form Zn(OH)₂, removing Zn²⁺ from solution and driving more electron loss.</div>
+    
+    <div class="footer">
+      Visualization for Learning Physics | Graduate-Level Electrochemistry Reference
+    </div>
   </div>
+  
+  <script>
+    // Create orbiting electrons
+    const electronContainer = document.getElementById('electronContainer');
+    const shellRadii = [45, 70, 100, 130]; // Radii for shells 1-4
+    const electronsPerShell = [2, 8, 18, 2]; // Electrons in each shell
+    
+    function createElectrons() {
+      electronContainer.innerHTML = '';
+      
+      for (let shell = 0; shell < 4; shell++) {
+        const numElectrons = electronsPerShell[shell];
+        const radius = shellRadii[shell];
+        
+        for (let i = 0; i < numElectrons; i++) {
+          const angle = (i / numElectrons) * 2 * Math.PI + (shell * 0.3);
+          const electron = document.createElement('div');
+          electron.className = 'electron' + (shell === 3 ? ' valence' : '');
+          electron.dataset.shell = shell;
+          electron.dataset.index = i;
+          
+          const x = Math.cos(angle) * radius;
+          const y = Math.sin(angle) * radius;
+          
+          electron.style.left = `calc(50% + ${x}px - 6px)`;
+          electron.style.top = `calc(50% + ${y}px - 6px)`;
+          
+          electronContainer.appendChild(electron);
+        }
+      }
+    }
+    
+    createElectrons();
+    
+    // Step annotations
+    const stepAnnotations = {
+      1: `<strong>Step 1 Details:</strong> In metallic zinc, 4s electrons are delocalized across the metal lattice 
+          (metallic bonding). Surface atoms have dangling bonds and reduced coordination, making their 
+          valence electrons more accessible for oxidation. The work function of Zn is 4.3 eV.`,
+      2: `<strong>Step 2 Details:</strong> In alkaline solution (KOH), OH⁻ ions are attracted to the positively 
+          charged zinc nuclei at the surface. This adsorption creates an electrical double layer and begins 
+          to weaken the Zn-electron bond by providing stabilization for the incipient Zn²⁺ ion.`,
+      3: `<strong>Step 3 Details:</strong> The external circuit creates a potential difference (E°<sub>cell</sub> = 1.50 V). 
+          Electrons are "pulled" toward the cathode where MnO₂ accepts them. This is driven by the Fermi level 
+          difference between the electrodes. The activation energy is lowered by the applied potential.`,
+      4: `<strong>Step 4 Details:</strong> Removal of two 4s electrons leaves Zn²⁺ with the configuration [Ar]3d¹⁰. 
+          This is a stable, filled d-shell configuration. The Zn²⁺ ion has ionic radius of 74 pm and high 
+          charge density, making it highly solvated in aqueous solution.`,
+      5: `<strong>Step 5 Details:</strong> Zn²⁺ + 2OH⁻ → Zn(OH)₂ (K<sub>sp</sub> = 3×10⁻¹⁷). The extremely low 
+          solubility product means virtually all Zn²⁺ precipitates immediately. This removes products from 
+          solution, shifting equilibrium toward more Zn oxidation (Le Chatelier's Principle).`
+    };
+    
+    // Step click handlers
+    document.querySelectorAll('.step').forEach(step => {
+      step.addEventListener('click', function() {
+        document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        const stepNum = this.dataset.step;
+        document.getElementById('stepAnnotation').innerHTML = stepAnnotations[stepNum];
+      });
+    });
+    
+    // Animation
+    let isAnimating = false;
+    
+    document.getElementById('animateBtn').addEventListener('click', function() {
+      if (isAnimating) return;
+      isAnimating = true;
+      this.classList.add('active');
+      
+      // Animate valence electrons leaving
+      const valenceElectrons = document.querySelectorAll('.electron.valence');
+      valenceElectrons.forEach((e, i) => {
+        setTimeout(() => {
+          e.classList.add('leaving');
+        }, i * 500);
+      });
+      
+      // Update orbital diagram
+      setTimeout(() => {
+        document.getElementById('valenceElectrons').innerHTML = 
+          '<div class="e-box" style="border-color: #ff6b6b; opacity: 0.3;"></div>';
+      }, 1500);
+      
+      // Step through process
+      const steps = document.querySelectorAll('.step');
+      steps.forEach((step, i) => {
+        setTimeout(() => {
+          steps.forEach(s => s.classList.remove('active'));
+          step.classList.add('active');
+          document.getElementById('stepAnnotation').innerHTML = stepAnnotations[i + 1];
+        }, i * 1200);
+      });
+    });
+    
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      isAnimating = false;
+      document.getElementById('animateBtn').classList.remove('active');
+      
+      // Reset electrons
+      createElectrons();
+      
+      // Reset orbital diagram
+      document.getElementById('valenceElectrons').innerHTML = 
+        '<div class="e-box" style="border-color: #ff6b6b;"><span class="arrow-up">↑</span><span class="arrow-down">↓</span></div>';
+      
+      // Reset steps
+      document.querySelectorAll('.step').forEach((s, i) => {
+        s.classList.remove('active');
+        if (i === 0) s.classList.add('active');
+      });
+      document.getElementById('stepAnnotation').innerHTML = stepAnnotations[1];
+    });
+  </script>
 </body>
 </html>
